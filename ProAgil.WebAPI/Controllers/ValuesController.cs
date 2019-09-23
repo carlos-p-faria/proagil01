@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ProAgil.WebAPI.Models;
+using ProAgil.Repository;
 
 namespace ProAgil.WebAPI.Controllers
 {
@@ -13,8 +13,8 @@ namespace ProAgil.WebAPI.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        public readonly DataContext _context;
-        public ValuesController(DataContext context)
+        public readonly ProAgilContext _context;
+        public ValuesController(ProAgilContext context)
         {
             _context = context;
         }
@@ -41,7 +41,7 @@ namespace ProAgil.WebAPI.Controllers
         {
             try
             {
-                var result = await _context.Eventos.FirstOrDefaultAsync(e => e.EventoId == id);
+                var result = await _context.Eventos.FirstOrDefaultAsync(e => e.Id == id);
                 if (result == null)
                     throw new Exception("Não existe este registro");
 
