@@ -30,6 +30,7 @@ namespace ProAgil.WebAPI
             services.AddEntityFrameworkSqlServer().AddDbContext<ProAgilContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("ProAgil")));
 
+            services.AddScoped<IProAgilRepository, ProAgilRepository>();
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
