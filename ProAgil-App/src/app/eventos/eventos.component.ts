@@ -1,6 +1,7 @@
 import { EventoService } from './../_services/evento.service';
 import { Component, OnInit } from '@angular/core';
 import { Evento } from '../_models/Evento';
+import { Constants } from './../util/Constants';
 
 @Component({
   selector: 'app-eventos',

@@ -7,12 +7,15 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { EventosComponent } from './eventos/eventos.component';
 import { NavComponent } from './nav/nav.component';
+import { DateTimeFormatPipePipe } from './_helpers/DateTimeFormatPipe.pipe';
+import { EventoService } from './_services/evento.service';
 
 @NgModule({
    declarations: [
       AppComponent,
       EventosComponent,
-      NavComponent
+      NavComponent,
+      DateTimeFormatPipePipe
    ],
    imports: [
       BrowserModule,
@@ -20,7 +23,9 @@ import { NavComponent } from './nav/nav.component';
       HttpClientModule,
       FormsModule
    ],
-   providers: [],
+   providers: [
+     EventoService
+   ],
    bootstrap: [
       AppComponent
    ]
