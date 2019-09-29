@@ -1,5 +1,5 @@
 import { EventoService } from './../_services/evento.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { Evento } from '../_models/Evento';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 
@@ -46,7 +46,7 @@ export class EventosComponent implements OnInit {
     this.mostrarImagem = !this.mostrarImagem;
   }
 
-  openModal(template: TemplareRef<any>) {
+  openModal(template: TemplateRef<any>) {
     this.modalRef = this.modalService.show(template);
   }
 
