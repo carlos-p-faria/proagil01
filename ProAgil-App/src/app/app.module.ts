@@ -3,12 +3,15 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule } from '@angular/forms';
+import { BsDropdownModule, TooltipModule, ModalModule } from 'ngx-bootstrap';
 
-import { AppComponent } from './app.component';
-import { EventosComponent } from './eventos/eventos.component';
-import { NavComponent } from './nav/nav.component';
-import { DateTimeFormatPipePipe } from './_helpers/DateTimeFormatPipe.pipe';
 import { EventoService } from './_services/evento.service';
+
+import { EventosComponent } from './eventos/eventos.component';
+import { AppComponent } from './app.component';
+import { NavComponent } from './nav/nav.component';
+
+import { DateTimeFormatPipePipe } from './_helpers/DateTimeFormatPipe.pipe';
 
 @NgModule({
    declarations: [
@@ -21,7 +24,10 @@ import { EventoService } from './_services/evento.service';
       BrowserModule,
       AppRoutingModule,
       HttpClientModule,
-      FormsModule
+      FormsModule,
+      BsDropdownModule.forRoot(),
+      TooltipModule.forRoot(),
+      ModalModule.forRoot()
    ],
    providers: [
      EventoService

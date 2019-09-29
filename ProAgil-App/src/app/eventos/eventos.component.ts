@@ -1,30 +1,35 @@
 import { EventoService } from './../_services/evento.service';
 import { Component, OnInit } from '@angular/core';
 import { Evento } from '../_models/Evento';
-import { Constants } from './../util/Constants';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 
 @Component({
   selector: 'app-eventos',
   templateUrl: './eventos.component.html',
   styleUrls: ['./eventos.component.css']
 })
-export class EventosComponent implements OnInit {
-  _filtroLista = '';
-  get filtroLista(): string {
-    return this._filtroLista;
-  }
-  set filtroLista(value: string) {
-    this._filtroLista = value;
-    this.eventosFiltrados = this._filtroLista ? this.filtrarEventos(this._filtroLista) : this.eventos;
-  }
 
+export class EventosComponent implements OnInit {
   eventosFiltrados: Evento[] = [];
   eventos: Evento[] = [];
   imagemLargura = 50;
   imagemMargem = 2;
   mostrarImagem = false;
+  modalRef: BsModalRef;
 
-  constructor(private eventoService: EventoService) {}
+  _filtroLista = '';
+
+  constructor(private eventoService: EventoService, private modalService: BsModalService) {}
+
+  get filtroLista(): string {
+    return this._filtroLista;
+  }
+
+  set filtroLista(value: string) {
+    this._filtroLista = value;
+    this.eventosFiltrados = this._filtroLista ? this.filtrarEventos(this._filtroLista) : this.eventos;
+  }
+
 
   ngOnInit() {
     this.getEventos();
@@ -39,6 +44,10 @@ export class EventosComponent implements OnInit {
 
   alternarImagem() {
     this.mostrarImagem = !this.mostrarImagem;
+  }
+
+  openModal(template: TemplareRef<any>) {
+    this.modalRef = this.modalService.show(template);
   }
 
   getEventos() {
