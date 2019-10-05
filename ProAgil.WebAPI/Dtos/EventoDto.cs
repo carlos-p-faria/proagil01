@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -14,10 +15,10 @@ namespace ProAgil.WebAPI.Dtos
         public int QtdPessoas { get; set; }
         public string ImagemURL { get; set; }
 
-        [Phone(ErrorMessage ="O valor informado no campo {0} é inválido")]
+        [Phone(ErrorMessage ="O valor informado no campo {0} ï¿½ invï¿½lido")]
         public string Telefone { get; set; }
 
-        [EmailAddress(ErrorMessage ="Informe um e-mail válido")]
+        [EmailAddress(ErrorMessage ="Informe um e-mail vï¿½lido")]
         public string Email { get; set; }
         public List<LoteDto> Lotes { get; set; }
         public List<RedeSocialDto> RedesSociais { get; set; }
