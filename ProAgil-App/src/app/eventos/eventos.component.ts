@@ -1,8 +1,11 @@
 import { EventoService } from './../_services/evento.service';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Evento } from '../_models/Evento';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { defineLocale, BsLocaleService, ptBrLocale} from 'ngx-bootstrap';
+
+defineLocale('pt-br', ptBrLocale);
 
 @Component({
   selector: 'app-eventos',
@@ -13,6 +16,7 @@ import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms'
 export class EventosComponent implements OnInit {
   eventosFiltrados: Evento[] = [];
   eventos: Evento[] = [];
+  evento: Evento;
   imagemLargura = 50;
   imagemMargem = 2;
   mostrarImagem = false;
@@ -21,7 +25,13 @@ export class EventosComponent implements OnInit {
 
   _filtroLista = '';
 
-  constructor(private eventoService: EventoService, private modalService: BsModalService, private fb: FormBuilder) {}
+  constructor(
+    private eventoService: EventoService,
+    private modalService: BsModalService,
+    private fb: FormBuilder,
+    private localeService: BsLocaleService) {
+    this.localeService.use('pt-br');
+  }
 
   get filtroLista(): string {
     return this._filtroLista;
@@ -61,12 +71,24 @@ export class EventosComponent implements OnInit {
     });
   }
 
-  SalvarAlteracao() {
-
+  salvarAlteracao(template: any) {
+    if (this.registerForm.valid) {
+      this.evento = Object.assign({}, this.registerForm.value);
+      this.eventoService.postEvento(this.evento).subscribe(
+        (novoEvento: Evento) => {
+          console.log(novoEvento);
+          template.hide();
+          this.getEventos();
+        }, error => {
+          console.log(error);
+        }
+      );
+    }
   }
 
-  openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template);
+  openModal(template: any) {
+    this.registerForm.reset();
+    template.show();
   }
 
   getEventos() {
