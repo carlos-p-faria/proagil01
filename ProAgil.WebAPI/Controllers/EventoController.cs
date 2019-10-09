@@ -41,7 +41,7 @@ namespace ProAgil.WebAPI.Controllers
         }
 
         // GET api/values
-        [HttpGet("{eventId}")]
+        [HttpGet("getById/{eventId}")]
         public async Task<IActionResult> Get(int eventId)
         {
             try

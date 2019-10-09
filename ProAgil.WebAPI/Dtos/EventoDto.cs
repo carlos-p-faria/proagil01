@@ -10,8 +10,6 @@ namespace ProAgil.WebAPI.Dtos
         public string Tema { get; set; }
         public string Local { get; set; }
         public string DataEvento { get; set; }
-
-        [Range(1,200,ErrorMessage = "Deve estar entre 1 e 200")]
         public int QtdPessoas { get; set; }
         public string ImagemURL { get; set; }
 
