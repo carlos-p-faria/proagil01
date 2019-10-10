@@ -4,6 +4,7 @@ import { Evento } from '../_models/Evento';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { defineLocale, BsLocaleService, ptBrLocale} from 'ngx-bootstrap';
+import { ToastrService, Toast } from 'ngx-toastr';
 
 defineLocale('pt-br', ptBrLocale);
 
@@ -14,6 +15,7 @@ defineLocale('pt-br', ptBrLocale);
 })
 
 export class EventosComponent implements OnInit {
+  titulo = 'Eventos';
   eventosFiltrados: Evento[] = [];
   eventos: Evento[] = [];
   evento: Evento;
@@ -30,6 +32,7 @@ export class EventosComponent implements OnInit {
     private eventoService: EventoService,
     private modalService: BsModalService,
     private fb: FormBuilder,
+    private toastr: ToastrService,
     private localeService: BsLocaleService) {
       this.localeService.use('pt-br');
     }
@@ -42,7 +45,6 @@ export class EventosComponent implements OnInit {
       this._filtroLista = value;
       this.eventosFiltrados = this._filtroLista ? this.filtrarEventos(this._filtroLista) : this.eventos;
     }
-
 
     ngOnInit() {
       this.getEventos();
@@ -81,7 +83,9 @@ export class EventosComponent implements OnInit {
                 console.log(novoEvento);
                 template.hide();
                 this.getEventos();
+                this.toastr.success('Inserido com sucesso');
               }, error => {
+                this.toastr.error(`Erro ao tentar inserir: ${ error }`);
                 console.log(error);
               }
               );
@@ -91,60 +95,65 @@ export class EventosComponent implements OnInit {
                 () => {
                   template.hide();
                   this.getEventos();
+                  this.toastr.success('Alterado com sucesso');
                 }, error => {
+                  this.toastr.error(`Erro ao tentar alterar: ${ error }`);
                   console.log(error);
                 }
                 );
+              }
             }
           }
-        }
 
-        editEvento(evento: Evento, template: any) {
-          this.putOrPost = 'PUT';
-          this.openModal(template, evento);
-        }
+          editEvento(evento: Evento, template: any) {
+            this.putOrPost = 'PUT';
+            this.openModal(template, evento);
+          }
 
-        addEvento(template: any) {
-          this.putOrPost = 'POST';
-          this.openModal(template);
-        }
+          addEvento(template: any) {
+            this.putOrPost = 'POST';
+            this.openModal(template);
+          }
 
-        excluirEvento(evento: Evento, template: any) {
-          this.openModal(template);
-          this.evento = evento;
-          this.bodyDeletarEvento = `Tem certeza que deseja excluir o Evento: ${evento.tema}, Código: ${evento.id}`;
-        }
+          excluirEvento(evento: Evento, template: any) {
+            this.putOrPost = 'NONE';
+            this.openModal(template);
+            this.evento = evento;
+            this.bodyDeletarEvento = `Tem certeza que deseja excluir o Evento: ${evento.tema}, Código: ${evento.id}`;
+          }
 
-        confirmeDelete(template: any) {
-          this.eventoService.deleteEvento(this.evento).subscribe(
-            () => {
+          confirmeDelete(template: any) {
+            this.eventoService.deleteEvento(this.evento).subscribe(
+              () => {
                 template.hide();
                 this.getEventos();
+                this.toastr.success('Deletado com sucesso');
               }, error => {
+                this.toastr.error(`Erro ao tentar deletar: ${ error }`);
                 console.log(error);
               }
-          );
-        }
-
-        openModal(template: any, evento?: Evento) {
-          this.evento = evento;
-          this.registerForm.reset();
-
-          if (this.putOrPost === 'PUT') {
-            this.registerForm.patchValue(this.evento);
-          }
-
-          template.show();
-        }
-
-        getEventos() {
-          this.eventoService.getAllEvento().subscribe(
-            ( _evento: Evento[] ) => {
-              this.eventos = _evento;
-              this.eventosFiltrados = this.eventos;
-            }, error => {
-              console.log(error);
+              );
             }
-            );
-          }
-        }
+
+            openModal(template: any, evento?: Evento) {
+              this.evento = evento;
+              this.registerForm.reset();
+
+              if (this.putOrPost === 'PUT') {
+                this.registerForm.patchValue(this.evento);
+              }
+
+              template.show();
+            }
+
+            getEventos() {
+              this.eventoService.getAllEvento().subscribe(
+                ( _evento: Evento[] ) => {
+                  this.eventos = _evento;
+                  this.eventosFiltrados = this.eventos;
+                }, error => {
+                  this.toastr.error(`Erro ao tentar consultar eventos: ${ error }`);
+                }
+                );
+              }
+            }

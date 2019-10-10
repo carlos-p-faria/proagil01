@@ -12,6 +12,10 @@ import { EventoService } from './_services/evento.service';
 import { EventosComponent } from './eventos/eventos.component';
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
+import { PalestrantesComponent } from './palestrantes/palestrantes.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { ContatosComponent } from './contatos/contatos.component';
+import { TituloComponent } from './_shared/titulo/titulo.component';
 
 import { DateTimeFormatPipePipe } from './_helpers/DateTimeFormatPipe.pipe';
 
@@ -20,6 +24,10 @@ import { DateTimeFormatPipePipe } from './_helpers/DateTimeFormatPipe.pipe';
       AppComponent,
       EventosComponent,
       NavComponent,
+      PalestrantesComponent,
+      DashboardComponent,
+      ContatosComponent,
+      TituloComponent,
       DateTimeFormatPipePipe
    ],
    imports: [
@@ -31,8 +39,12 @@ import { DateTimeFormatPipePipe } from './_helpers/DateTimeFormatPipe.pipe';
       BsDatepickerModule.forRoot(),
       TooltipModule.forRoot(),
       ModalModule.forRoot(),
-      BrowserAnimationsModule, // required animations module
-      ToastrModule.forRoot(),
+      BrowserAnimationsModule,
+      ToastrModule.forRoot({
+        timeOut: 10000,
+        positionClass: 'toast-bottom-right',
+        preventDuplicates: true,
+      }),
       ReactiveFormsModule
    ],
    providers: [
