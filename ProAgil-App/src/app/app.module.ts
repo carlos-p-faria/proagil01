@@ -40,11 +40,7 @@ import { DateTimeFormatPipePipe } from './_helpers/DateTimeFormatPipe.pipe';
       TooltipModule.forRoot(),
       ModalModule.forRoot(),
       BrowserAnimationsModule,
-      ToastrModule.forRoot({
-        timeOut: 10000,
-        positionClass: 'toast-bottom-right',
-        preventDuplicates: true,
-      }),
+      ToastrModule.forRoot(),
       ReactiveFormsModule
    ],
    providers: [

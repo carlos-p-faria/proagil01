@@ -6,7 +6,7 @@
     </div>
   </div>
   <div>
-    <button class="btn btn-outline-primary" (click)="openModal(template)">
+    <button class="btn btn-outline-primary" (click)="addEvento(template)">
       <i class="fa fa-plus-circle"></i>&nbsp;
       Novo Evento
     </button>
@@ -109,7 +109,7 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
           </div>
           <div class="form-group col-md-4">
             <label>Data e Hora</label>
-            <input type="text" class="form-control" bsDatepicker [bsConfig] = "{dateInputFormat: 'DD/MM/YYYY hh:mm a'}"
+            <input type="text" class="form-control" bsDatepicker [bsConfig] = "{dateInputFormat: 'DD/MM/YYYY HH:mm:ss'}"
             [ngClass]="{'is-invalid': registerForm.get('dataEvento').errors && registerForm.get('dataEvento').touched}" formControlName ="dataEvento" placeholder="Insira a data e hora">
             <div class="invalid-feedback">
               A data e hora são obrigatórios
