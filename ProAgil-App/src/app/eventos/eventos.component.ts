@@ -26,6 +26,8 @@ export class EventosComponent implements OnInit {
   registerForm: FormGroup;
   putOrPost: string;
   bodyDeletarEvento: string;
+  file: File;
+
   _filtroLista = '';
 
   constructor(
@@ -34,125 +36,140 @@ export class EventosComponent implements OnInit {
     private toastr: ToastrService,
     private localeService: BsLocaleService) {
       this.localeService.use('pt-br');
-    }
+  }
 
-    get filtroLista(): string {
-      return this._filtroLista;
-    }
+  get filtroLista(): string {
+    return this._filtroLista;
+  }
 
-    set filtroLista(value: string) {
-      this._filtroLista = value;
-      this.eventosFiltrados = this._filtroLista ? this.filtrarEventos(this._filtroLista) : this.eventos;
-    }
+  set filtroLista(value: string) {
+    this._filtroLista = value;
+    this.eventosFiltrados = this._filtroLista ? this.filtrarEventos(this._filtroLista) : this.eventos;
+  }
 
-    ngOnInit() {
-      this.getEventos();
-      this.validation();
-    }
+  ngOnInit() {
+    this.getEventos();
+    this.validation();
+  }
 
-    filtrarEventos(filtrarPor: string): Evento[] {
-      filtrarPor = filtrarPor.toLocaleLowerCase();
-      return this.eventos.filter(
-        evento => evento.tema.toLocaleLowerCase().indexOf(filtrarPor) !== -1
-        );
+  filtrarEventos(filtrarPor: string): Evento[] {
+    filtrarPor = filtrarPor.toLocaleLowerCase();
+    return this.eventos.filter(
+      evento => evento.tema.toLocaleLowerCase().indexOf(filtrarPor) !== -1
+    );
+  }
+
+  alternarImagem() {
+    this.mostrarImagem = !this.mostrarImagem;
+  }
+
+  validation() {
+    this.registerForm = this.fb.group({
+      tema: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
+      local: ['', Validators.required],
+      dataEvento: ['', Validators.required],
+      qtdPessoas: ['', [Validators.required, Validators.max(120000)]],
+      imagemURL: ['', Validators.required],
+      telefone: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]]
+    });
+  }
+
+  salvarAlteracao(template: any) {
+    if (this.registerForm.valid) {
+      if (this.putOrPost === 'POST') {
+        this.evento = Object.assign({}, this.registerForm.value);
+
+        this.eventoService.postUpload(this.file).subscribe();
+
+        // e.g. c:\\fakeFolder\\nomearquivo.jpg
+        const arquivoNome = this.evento.imagemURL.split('\\', 3)[2];
+        this.evento.imagemURL = arquivoNome;
+        this.eventoService.postEvento(this.evento).subscribe(
+          (novoEvento: Evento) => {
+            console.log(novoEvento);
+            template.hide();
+            this.getEventos();
+            this.toastr.success('Inserido com sucesso');
+          }, error => {
+            this.toastr.error(`Erro ao tentar inserir: ${ error }`);
+            console.log(error);
+          }
+          );
+      } else {
+          this.evento = Object.assign({ id: this.evento.id }, this.registerForm.value);
+          this.eventoService.putEvento(this.evento).subscribe(
+            () => {
+              template.hide();
+              this.getEventos();
+              this.toastr.success('Alterado com sucesso');
+            }, error => {
+              this.toastr.error(`Erro ao tentar alterar: ${ error }`);
+              console.log(error);
+            }
+          );
       }
+    }
+  }
 
-      alternarImagem() {
-        this.mostrarImagem = !this.mostrarImagem;
+  editEvento(evento: Evento, template: any) {
+    this.putOrPost = 'PUT';
+    this.openModal(template, evento);
+  }
+
+  addEvento(template: any) {
+    this.putOrPost = 'POST';
+    this.openModal(template);
+  }
+
+  excluirEvento(evento: Evento, template: any) {
+    this.putOrPost = 'NONE';
+    this.openModal(template);
+    this.evento = evento;
+    this.bodyDeletarEvento = `Tem certeza que deseja excluir o Evento: ${evento.tema}, Código: ${evento.id}`;
+  }
+
+  confirmeDelete(template: any) {
+    this.eventoService.deleteEvento(this.evento).subscribe(
+      () => {
+        template.hide();
+        this.getEventos();
+        this.toastr.success('Deletado com sucesso');
+      }, error => {
+        this.toastr.error(`Erro ao tentar deletar: ${ error }`);
+        console.log(error);
       }
+    );
+  }
 
-      validation() {
-        this.registerForm = this.fb.group({
-          tema: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
-          local: ['', Validators.required],
-          dataEvento: ['', Validators.required],
-          qtdPessoas: ['', [Validators.required, Validators.max(120000)]],
-          imagemURL: ['', Validators.required],
-          telefone: ['', Validators.required],
-          email: ['', [Validators.required, Validators.email]]
-        });
+  openModal(template: any, evento?: Evento) {
+    this.evento = evento;
+    this.registerForm.reset();
+
+    if (this.putOrPost === 'PUT') {
+      this.registerForm.patchValue(this.evento);
+    }
+
+    template.show();
+  }
+
+  getEventos() {
+    this.eventoService.getAllEvento().subscribe(
+      ( _evento: Evento[] ) => {
+        this.eventos = _evento;
+        this.eventosFiltrados = this.eventos;
+      }, error => {
+        this.toastr.error(`Erro ao tentar consultar eventos: ${ error }`);
       }
+    );
+  }
 
-      salvarAlteracao(template: any) {
-        if (this.registerForm.valid) {
-          if (this.putOrPost === 'POST') {
-            this.evento = Object.assign({}, this.registerForm.value);
-            this.eventoService.postEvento(this.evento).subscribe(
-              (novoEvento: Evento) => {
-                console.log(novoEvento);
-                template.hide();
-                this.getEventos();
-                this.toastr.success('Inserido com sucesso');
-              }, error => {
-                this.toastr.error(`Erro ao tentar inserir: ${ error }`);
-                console.log(error);
-              }
-              );
-            } else {
-              this.evento = Object.assign({ id: this.evento.id }, this.registerForm.value);
-              this.eventoService.putEvento(this.evento).subscribe(
-                () => {
-                  template.hide();
-                  this.getEventos();
-                  this.toastr.success('Alterado com sucesso');
-                }, error => {
-                  this.toastr.error(`Erro ao tentar alterar: ${ error }`);
-                  console.log(error);
-                }
-                );
-              }
-            }
-          }
+  onFileChange(evento) {
+    const reader = new FileReader();
 
-          editEvento(evento: Evento, template: any) {
-            this.putOrPost = 'PUT';
-            this.openModal(template, evento);
-          }
-
-          addEvento(template: any) {
-            this.putOrPost = 'POST';
-            this.openModal(template);
-          }
-
-          excluirEvento(evento: Evento, template: any) {
-            this.putOrPost = 'NONE';
-            this.openModal(template);
-            this.evento = evento;
-            this.bodyDeletarEvento = `Tem certeza que deseja excluir o Evento: ${evento.tema}, Código: ${evento.id}`;
-          }
-
-          confirmeDelete(template: any) {
-            this.eventoService.deleteEvento(this.evento).subscribe(
-              () => {
-                template.hide();
-                this.getEventos();
-                this.toastr.success('Deletado com sucesso');
-              }, error => {
-                this.toastr.error(`Erro ao tentar deletar: ${ error }`);
-                console.log(error);
-              }
-              );
-            }
-
-            openModal(template: any, evento?: Evento) {
-              this.evento = evento;
-              this.registerForm.reset();
-
-              if (this.putOrPost === 'PUT') {
-                this.registerForm.patchValue(this.evento);
-              }
-
-              template.show();
-            }
-
-            getEventos() {
-              this.eventoService.getAllEvento().subscribe(
-                ( _evento: Evento[] ) => {
-                  this.eventos = _evento;
-                  this.eventosFiltrados = this.eventos;
-                }, error => {
-                  this.toastr.error(`Erro ao tentar consultar eventos: ${ error }`);
-                }
-                );
-              }
-            }
+    if (evento.target.files && evento.target.files.length) {
+      this.file = evento.target.files;
+      console.log(this.file);
+    }
+  }
+}

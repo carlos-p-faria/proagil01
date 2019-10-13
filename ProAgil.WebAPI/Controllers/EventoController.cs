@@ -164,7 +164,7 @@ namespace ProAgil.WebAPI.Controllers
 
                 if (file.Length > 0){
                     using (var stream = new FileStream(fullPath, FileMode.Create)){
-                        file.CopyTo(stream);
+                        await file.CopyToAsync(stream);
                     }
 
                     return Ok();

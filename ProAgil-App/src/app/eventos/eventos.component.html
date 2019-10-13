@@ -127,10 +127,19 @@ role="dialog" aria-labelledby="dialog-sizes-name1">
           </div>
           <div class="form-group col-md-9">
             <label>Imagem</label>
-            <input type="file" #file class="form-control"
-            [ngClass]="{'is-invalid': registerForm.get('imagemURL').errors && registerForm.get('imagemURL').touched}" formControlName ="imagemURL" placeholder="Insira imagem">
-            <div class="invalid-feedback">
-              A imagem é obrigatória
+            <div>
+              <button class="btn btn-success" (click)="file.click()">Enviar imagem</button>
+              <table style="display: none">
+                <tr>
+                  <td>
+                    <input type="file" #file class="form-control"
+                    [ngClass]="{'is-invalid': registerForm.get('imagemURL').errors && registerForm.get('imagemURL').touched}" (change)="onFileChange($event)" formControlName="imagemURL" placeholder="Insira imagem">
+                    <div class="invalid-feedback">
+                      A imagem é obrigatória
+                    </div>
+                  </td>
+                </tr>
+              </table>
             </div>
           </div>
         </div>
