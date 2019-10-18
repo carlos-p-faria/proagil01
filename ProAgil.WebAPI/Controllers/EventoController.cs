@@ -151,19 +151,21 @@ namespace ProAgil.WebAPI.Controllers
 
         // POST api/values
         [HttpPost("upload")]
-        public async Task<IActionResult> upload(EventoDto evento)
+        public async Task<IActionResult> upload()
         {
             try
             {
                 var file = Request.Form.Files[0];
-                var folderName = Path.Combine("Resources/Images");
+                var folderName = Path.Combine("Resources", "Images");
                 var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName;
                 var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
 
-                var fullPath = Path.Combine(pathToSave, fileName.Replace("\"","").Trim());
+                var fullPath = Path.Combine(pathToSave, fileName.Replace("\"", "").Trim());
 
-                if (file.Length > 0){
-                    using (var stream = new FileStream(fullPath, FileMode.Create)){
+                if (file.Length > 0)
+                {
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
                         await file.CopyToAsync(stream);
                     }
 
